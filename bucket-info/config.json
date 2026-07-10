@@ -1,0 +1,36 @@
+{
+  "bucket_name": "sysu-date",
+  "region": "oss-cn-hongkong",
+  "storage_class": "Standard",
+  "creation_date": "2026-03-28",
+  "endpoint": "oss-cn-hongkong.aliyuncs.com",
+  "access_control": {
+    "acl": "private",
+    "policy": "自定义Bucket Policy"
+  },
+  "cors": {
+    "allowed_origins": ["*"],
+    "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
+    "allowed_headers": ["*"]
+  },
+  "logging": {
+    "enabled": false,
+    "bucket": ""
+  },
+  "versioning": {
+    "status": "Disabled"
+  },
+  "lifecycle": {
+    "enabled": false,
+    "rules": []
+  },
+  "referer": {
+    "enabled": true,
+    "referers": []
+  },
+  "usage": {
+    "storage_size_gb": 0,
+    "object_count": 0,
+    "monthly_requests": 0
+  }
+}

@@ -1,0 +1,11 @@
+--- a/index.js
++++ b/index.js
+@@ -1558,7 +1558,7 @@ async function executeDatabaseQuery(action, params, pool) {
+         switch (action) {
+             case 'recent_users':
+                 const [recentUsers] = await pool.execute(
+-                    `SELECT serial_number, nickname, sex, campus, grade, major, constellation, mbti, relationship_goal, wechat, created_at
++                    `SELECT serial_number, nickname, sex, campus, grade, major, constellation, mbti, relationship_goal, created_at
+                      FROM users ORDER BY created_at DESC LIMIT ?`,
+                     [params.limit || 10]
+                 );

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>交友问卷 | FancyU · 中意你</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --sysu-green: #005826;
+            --sysu-green-light: #007A3D;
+            --sysu-green-dark: #003D1A;
+            --sysu-red: #A6372D;
+            --bg-paper: #F8F6F1;
+            --bg-paper-light: #FAFAF8;
+            --card-white: #FFFFFF;
+            --text-primary: #1A1A1A;
+            --text-secondary: #4A4A4A;
+            --text-muted: #8A8A8A;
+            --border-soft: #E8E6E1;
+            --shadow-soft: 0 4px 20px rgba(0, 58, 26, 0.06);
+            --shadow-hover: 0 8px 30px rgba(0, 58, 26, 0.10);
+        }
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-paper);
+            min-height: 100vh;
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
+        .container { max-width: 480px; margin: 0 auto; padding: 24px 20px; position: relative; z-index: 1; }
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 24px; }
+        .logo { font-family: 'Noto Serif SC', serif; font-size: 24px; font-weight: 700; color: var(--sysu-green); letter-spacing: 1px; }
+        .step-indicator { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .step-text { font-family: 'Noto Serif SC', serif; font-size: 13px; color: var(--sysu-green); font-weight: 600; letter-spacing: 2px; }
+        .step-progress { flex: 1; height: 3px; background: var(--border-soft); border-radius: 2px; overflow: hidden; }
+        .step-progress-fill { height: 100%; background: linear-gradient(90deg, var(--sysu-green) 70%, var(--sysu-red) 100%); border-radius: 2px; transition: width 0.4s ease; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--sysu-green); text-decoration: none; font-size: 14px; margin-bottom: 16px; padding: 8px 12px; background: var(--card-white); border-radius: 10px; transition: all 0.2s ease; box-shadow: var(--shadow-soft); }
+        .back-link:hover { box-shadow: var(--shadow-hover); }
+        .page-title { font-family: 'Noto Serif SC', serif; font-size: 28px; font-weight: 700; color: var(--text-primary); margin-bottom: 32px; line-height: 1.4; }
+        .card { background: var(--card-white); border-radius: 20px; padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow-soft); transition: all 0.3s ease; }
+        .card:hover { box-shadow: var(--shadow-hover); }
+        .card-label { font-family: 'Noto Sans SC', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .card-label .required-mark { color: var(--sysu-red); font-size: 12px; }
+        .sub-label { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
+        .input-wrapper { flex: 1; }
+        .input-field { width: 100%; padding: 14px 0; font-size: 16px; font-family: 'Noto Sans SC', sans-serif; border: none; border-bottom: 2px solid var(--border-soft); background: transparent; outline: none; transition: border-color 0.3s ease; color: var(--text-primary); }
+        .input-field:focus { border-bottom-color: var(--sysu-green); }
+        .input-field::placeholder { color: var(--text-muted); }
+        .input-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+        .option-group { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { padding: 12px 16px; border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.25s ease; background: var(--bg-paper); color: var(--text-secondary); border: none; text-align: center; }
+        .option-btn:hover { background: var(--bg-paper-light); }
+        .option-btn.selected { background: var(--sysu-green); color: white; font-weight: 600; }
+        .option-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .option-row .option-btn { flex: 1; min-width: 60px; padding: 10px 8px; font-size: 14px; }
+        .select-wrapper { position: relative; margin-bottom: 12px; }
+        .select-wrapper:last-child { margin-bottom: 0; }
+        .select-field { width: 100%; padding: 14px 40px 14px 16px; font-size: 15px; font-family: 'Noto Sans SC', sans-serif; border: none; border-radius: 12px; background: var(--bg-paper); color: var(--text-primary); cursor: pointer; appearance: none; outline: none; transition: all 0.2s ease; }
+        .select-field:focus { background: var(--bg-paper-light); box-shadow: 0 0 0 2px var(--sysu-green); }
+        .select-arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 12px; }
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-btn { padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.25s ease; background: var(--bg-paper); color: var(--text-secondary); border: 1px solid var(--border-soft); }
+        .tag-btn:hover { border-color: var(--sysu-green); }
+        .tag-btn.selected { background: var(--sysu-green); color: white; border-color: var(--sysu-green); font-weight: 600; }
+        .textarea-field { width: 100%; padding: 16px; font-size: 15px; font-family: 'Noto Sans SC', sans-serif; border: 1px solid var(--border-soft); border-radius: 16px; background: var(--bg-paper); color: var(--text-primary); outline: none; transition: all 0.2s ease; resize: vertical; min-height: 100px; line-height: 1.6; }
+        .textarea-field:focus { border-color: var(--sysu-green); background: var(--bg-paper-light); }
+        .textarea-field::placeholder { color: var(--text-muted); }
+        .page-hint { text-align: center; padding: 16px; color: var(--text-muted); font-size: 13px; line-height: 1.6; background: linear-gradient(135deg, rgba(0,88,38,0.03) 0%, rgba(0,88,38,0.01) 100%); border-radius: 12px; margin-top: 8px; }
+        .page-hint-icon { color: var(--sysu-green); margin-right: 4px; }
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px 24px; background: linear-gradient(to top, var(--bg-paper) 80%, transparent); z-index: 100; }
+        .bottom-btn-wrapper { max-width: 480px; margin: 0 auto; display: flex; gap: 12px; }
+        .prev-btn { padding: 18px 24px; background: var(--card-white); color: var(--text-secondary); border: 1px solid var(--border-soft); border-radius: 24px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; }
+        .prev-btn:hover { border-color: var(--sysu-green); color: var(--sysu-green); }
+        .next-btn { flex: 1; padding: 18px 0; background: var(--sysu-green); color: white; border: none; border-radius: 24px; font-size: 17px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 20px rgba(0, 88, 26, 0.25); }
+        .next-btn:hover { background: var(--sysu-green-light); transform: scale(1.02); }
+        .next-btn:active { transform: scale(0.98); }
+        .next-btn:disabled { background: var(--border-soft); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+        .next-btn.submit-btn { background: linear-gradient(135deg, var(--sysu-green) 0%, var(--sysu-green-light) 100%); }
+        .toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-20px); padding: 14px 28px; border-radius: 16px; background: var(--sysu-green); color: white; font-size: 15px; font-weight: 500; z-index: 200; opacity: 0; transition: all 0.3s ease; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.error { background: var(--sysu-red); }
+        .success-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 300; }
+        .success-modal.show { display: flex; }
+        .success-content { background: var(--card-white); padding: 48px 36px; border-radius: 28px; text-align: center; max-width: 360px; box-shadow: 0 20px 60px rgba(0, 58, 26, 0.15); animation: modalIn 0.4s ease; }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .success-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: var(--sysu-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; }
+        .success-title { font-family: 'Noto Serif SC', serif; font-size: 26px; color: var(--text-primary); margin-bottom: 12px; font-weight: 700; }
+        .success-desc { color: var(--text-secondary); font-size: 15px; margin-bottom: 28px; line-height: 1.7; }
+        .success-btn { display: inline-block; padding: 14px 36px; background: var(--sysu-green); color: white; border-radius: 20px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; }
+        .success-btn:hover { background: var(--sysu-green-light); }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .upload-area { border: 2px dashed var(--border-soft); border-radius: 16px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: var(--bg-paper); }
+        .upload-area:hover { border-color: var(--sysu-green); background: var(--bg-paper-light); }
+        .upload-icon { font-size: 36px; margin-bottom: 12px; }
+        .upload-text { font-size: 15px; color: var(--text-secondary); font-weight: 500; margin-bottom: 8px; }
+        .upload-hint { font-size: 12px; color: var(--text-muted); }
+        .upload-preview { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+        .preview-item { position: relative; width: 100px; height: 100px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-soft); }
+        .preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .preview-remove { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; background: rgba(0, 0, 0, 0.6); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; transition: all 0.2s ease; }
+        .preview-remove:hover { background: var(--sysu-red); }
+        @media (max-width: 480px) {
+            .container { padding: 16px; }
+            .page-title { font-size: 24px; }
+            .card { padding: 20px; border-radius: 16px; }
+            .option-row { flex-direction: column; }
+            .option-row .option-btn { min-width: 100%; }
+            .bottom-btn-wrapper { flex-direction: column-reverse; }
+            .preview-item { width: 80px; height: 80px; }
+        }
+
+        /* ========== 暗色模式 ========== */
+        @media (prefers-color-scheme: dark) {
+            body { background: #0f1a14; }
+            .container { color: #e8f0eb; }
+            .header { border-bottom-color: #2a4a3a; }
+            .logo { color: #4ade80; }
+            .back-link { color: #4ade80; }
+            .back-link:hover { background: rgba(0, 133, 62, 0.1); }
+            .page-title { color: #4ade80; }
+            .step-indicator { color: #6a7a70; }
+            .step-indicator .current { color: #4ade80; }
+            .card { background: #1a2e24; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+            .card h2 { color: #4ade80; border-bottom-color: #2a4a3a; }
+            .form-group label { color: #c8d8ce; }
+            .form-group input, .form-group select, .form-group textarea {
+                background: #0f1a14;
+                border-color: #2a4a3a;
+                color: #e8f0eb;
+            }
+            .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #4ade80; }
+            .option-btn { background: #0f1a14; border-color: #2a4a3a; color: #c8d8ce; }
+            .option-btn:hover { background: #1a2e24; border-color: #4ade80; }
+            .option-btn.selected { background: rgba(0, 133, 62, 0.2); border-color: #4ade80; color: #4ade80; }
+            .prev-btn { background: #0f1a14; border-color: #2a4a3a; color: #c8d8ce; }
+            .prev-btn:hover { background: #1a2e24; }
+            .btn-primary { background: #00853E; }
+            .btn-primary:hover { background: #006B30; }
+            .hint { color: #6a7a70; }
+            .preview-item { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+            .msg.error { color: #ff6b7a; }
+            .msg.success { color: #4ade80; }
+        }
+
+        /* ========== 减少动画 ========== */
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">FancyU · 中意你</div>
+    </div>
+    <div class="step-indicator">
+        <span class="step-text" id="stepText">STEP 01 / 05</span>
+        <div class="step-progress">
+            <div class="step-progress-fill" id="progressFill" style="width: 20%"></div>
+        </div>
+    </div>
+    <a href="index.html" class="back-link">← 返回首页</a>
+
+    <!-- ========== STEP 01: 基础背景 ========== -->
+    <div class="step-content active" id="step1">
+        <h1 class="page-title">基础背景</h1>
+        <div class="card">
+            <div class="card-label">基本信息</div>
+            <div class="sub-label">你的性别</div>
+            <div class="option-row" data-field="sex">
+                <button class="option-btn" data-value="男">男</button>
+                <button class="option-btn" data-value="女">女</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-label">年级与校区</div>
+            <div class="sub-label">你的年级</div>
+            <div class="select-wrapper">
+                <select class="select-field" data-field="grade">
+                    <option value="">选择年级</option>
+                    <option value="大一">大一</option><option value="大二">大二</option>
+                    <option value="大三">大三</option><option value="大四">大四</option>
+                    <option value="研一">研一</option><option value="研二">研二</option>
+                    <option value="研三">研三</option><option value="博士">博士</option>
+                    <option value="其他">其他</option>
+                </select>
+                <span class="select-arrow">▼</span>
+            </div>
+            <div class="sub-label">所在校区</div>
+            <div class="select-wrapper">
+                <select class="select-field" data-field="campus">
+                    <option value="">选择校区</option>
+                    <option value="南校（广州）">南校（广州）</option>
+                    <option value="北校（广州）">北校（广州）</option>
+                    <option value="东校（广州）">东校（广州）</option>
+                    <option value="珠海校区">珠海校区</option>
+                    <option value="深圳校区">深圳校区</option>
+                    <option value="五山校区">五山校区</option>
+                    <option value="大学城校区">大学城校区</option>
+                    <option value="国际校区">国际校区</option>
+                </select>
+                <span class="select-arrow">▼</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-label">专业与家乡</div>
+            <div class="sub-label">你的专业</div>
+            <div class="input-wrapper">
+                <input type="text" class="input-field" placeholder="填写专业名称" data-field="major">
+            </div>
+            <div class="sub-label">你的家乡</div>
+            <div class="select-wrapper">
+                <select class="select-field" data-field="hometown">
+                    <option value="">选择地区</option>
+                    <optgroup label="内地省份">
+                        <option value="广东">广东</option><option value="北京">北京</option><option value="上海">上海</option>
+                        <option value="浙江">浙江</option><option value="江苏">江苏</option><option value="四川">四川</option>
+                        <option value="湖北">湖北</option><option value="湖南">湖南</option><option value="福建">福建</option>
+                        <option value="山东">山东</option><option value="河南">河南</option><option value="安徽">安徽</option>
+                        <option value="江西">江西</option><option value="广西">广西</option><option value="海南">海南</option>
+                        <option value="云南">云南</option><option value="贵州">贵州</option><option value="陕西">陕西</option>
+                        <option value="甘肃">甘肃</option><option value="青海">青海</option><option value="内蒙古">内蒙古</option>
+                        <option value="新疆">新疆</option><option value="西藏">西藏</option><option value="宁夏">宁夏</option>
+                        <option value="天津">天津</option><option value="重庆">重庆</option><option value="辽宁">辽宁</option>
+                        <option value="吉林">吉林</option><option value="黑龙江">黑龙江</option><option value="河北">河北</option>
+                        <option value="山西">山西</option>
+                    </optgroup>
+                    <optgroup label="港澳台地区"><option value="香港">香港</option><option value="澳门">澳门</option><option value="台湾">台湾</option></optgroup>
+                    <optgroup label="其他"><option value="国外">国外</option></optgroup>
+                </select>
+                <span class="select-arrow">▼</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-label">期望对方学校 <span class="required-mark">*必填</span></div>
+            <div class="sub-label">你希望匹配到哪些学校的同学？（可多选）</div>
+            <div class="tags-container" data-field="school_prefer" data-multi="true" data-required="true">
+                <button class="tag-btn" data-value="不限">不限</button>
+                <button class="tag-btn" data-value="中山大学">中山大学</button>
+                <button class="tag-btn" data-value="华南理工大学">华南理工大学</button>
+            </div>
+        </div>
+        <div class="page-hint"><span class="page-hint-icon">💡</span>填写越详细越真诚，匹配成功率越高哦～</div>
+    </div>
+
+    <!-- ========== STEP 02: 个人特质 ========== -->
+    <div class="step-content" id="step2">
+        <h1 class="page-title">个人特质</h1>
+        <div class="card">
+            <div class="card-label">MBTI</div>
+            <div class="select-wrapper">
+                <select class="select-field" data-field="mbti">
+                    <option value="">选择MBTI</option>
+                    <option value="INTJ">INTJ - 建筑师</option><option value="INTP">INTP - 逻辑学家</option>
+                    <option value="ENTJ">ENTJ - 指挥官</option><option value="ENTP">ENTP - 辩论家</option>
+                    <option value="INFJ">INFJ - 提倡者</option><option value="INFP">INFP - 调解员</option>
+                    <option value="ENFJ">ENFJ - 主人公</option><option value="ENFP">ENFP - 竞选者</option>
+                    <option value="ISTJ">ISTJ - 检查员</option><option value="ISTP">ISTP - 工匠</option>
+                    <option value="ESTJ">ESTJ - 执行官</option><option value="ESTP">ESTP - 企业家</option>
+                    <option value="ISFJ">ISFJ - 守卫者</option><option value="ISFP">ISFP - 探险家</option>
+                    <option value="ESFJ">ESFJ - 供给者</option><option value="ESFP">ESFP - 表演者</option>
+                    <option value="不确定">不确定</option>
+                </select>
+                <span class="select-arrow">▼</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-label">兴趣爱好 <span style="color: var(--text-muted); font-size: 12px;">可多选</span></div>
+            <div class="tags-container" data-field="hobbies" data-multi="true">
+                <button class="tag-btn" data-value="运动">运动</button>
+                <button class="tag-btn" data-value="音乐">音乐</button>
+                <button class="tag-btn" data-value="电影">电影</button>
+                <button class="tag-btn" data-value="阅读">阅读</button>
+                <button class="tag-btn" data-value="游戏">游戏</button>
+                <button class="tag-btn" data-value="旅行">旅行</button>
+                <button class="tag-btn" data-value="美食">美食</button>
+                <button class="tag-btn" data-value="摄影">摄影</button>
+                <button class="tag-btn" data-value="绘画">绘画</button>
+                <button class="tag-btn" data-value="编程">编程</button>
+                <button class="tag-btn" data-value="舞蹈">舞蹈</button>
+                <button class="tag-btn" data-value="其他">其他</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-label">交友目的 <span class="required-mark">*必填</span></div>
+            <div class="option-group" data-field="friend_goal">
+                <button class="option-btn" data-value="学习搭子">学习搭子</button>
+                <button class="option-btn" data-value="饭搭子">饭搭子</button>
+                <button class="option-btn" data-value="运动搭子">运动搭子</button>
+                <button class="option-btn" data-value="游戏搭子">游戏搭子</button>
+                <button class="option-btn" data-value="聊天搭子">聊天搭子</button>
+                <button class="option-btn" data-value="综合交友">综合交友</button>
+            </div>
+        </div>
+        <div class="page-hint"><span class="page-hint-icon">💡</span>选择真实的兴趣爱好，更容易找到志同道合的朋友</div>
+    </div>
+
+    <!-- ========== STEP 03: 自我介绍 ========== -->
+    <div class="step-content" id="step3">
+        <h1 class="page-title">自我介绍</h1>
+        <div class="card">
+            <div class="card-label">关于我</div>
+            <div class="input-hint" style="margin-bottom: 12px;">简单介绍一下自己，让对方更好地了解你</div>
+            <textarea class="textarea-field" data-field="self_description" placeholder="例如：性格特点、生活习惯、日常作息等"></textarea>
+        </div>
+        <div class="card">
+            <div class="card-label">期望的朋友</div>
+            <textarea class="textarea-field" data-field="ideal_friend" placeholder="描述你期望交到什么样的朋友..."></textarea>
+        </div>
+        <div class="page-hint"><span class="page-hint-icon">💡</span>真诚的介绍更容易吸引到合适的朋友</div>
+    </div>
+
+    <!-- ========== STEP 04: 上传照片 ========== -->
+    <div class="step-content" id="step4">
+        <h1 class="page-title">上传照片</h1>
+        <div class="card">
+            <div class="card-label">个人照片（可选）</div>
+            <div class="input-hint" style="margin-bottom: 12px;">上传照片可以让你的资料更真实可信</div>
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">点击上传1～3张照片</div>
+                <div class="upload-hint">支持 JPG、PNG 格式</div>
+                <input type="file" id="photoInput" accept="image/*" multiple style="display: none;">
+            </div>
+            <div class="upload-preview" id="photoPreview"></div>
+        </div>
+        <div class="card">
+            <div class="card-label">关于展示（不填默认全部）</div>
+            <div class="tags-container" data-field="display_self" data-multi="true">
+                <button class="tag-btn" data-value="基础背景">基础背景</button>
+                <button class="tag-btn" data-value="个人特质">个人特质</button>
+                <button class="tag-btn" data-value="自我介绍">自我介绍</button>
+                <button class="tag-btn" data-value="照片">照片</button>
+            </div>
+        </div>
+        <div class="page-hint"><span class="page-hint-icon">💡</span>照片能让对方更快记住你</div>
+    </div>
+
+    <!-- ========== STEP 05: 联系方式 ========== -->
+    <div class="step-content" id="step5">
+        <h1 class="page-title">联系方式</h1>
+        <div class="card">
+            <div class="card-label">联系方式 <span class="required-mark">*必填</span></div>
+            <div class="input-wrapper">
+                <input type="text" class="input-field" id="contactInput" placeholder="填写你的常用联系方式" data-field="contact_info">
+                <div class="input-hint">可填写邮箱、微信、QQ等任意联系方式</div>
+            </div>
+        </div>
+        <div class="card" style="background: linear-gradient(135deg, rgba(0,88,38,0.05) 0%, rgba(0,88,38,0.02) 100%); border: 1px solid rgba(0,88,38,0.1);">
+            <div style="text-align: center; padding: 20px 0;">
+                <div style="font-family: 'Noto Serif SC', serif; font-size: 20px; color: var(--sysu-green); margin-bottom: 12px;">🎉 即将完成</div>
+                <div style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">点击提交后，你的交友问卷将被加入匹配池<br>我们将在匹配后通知你结果</div>
+            </div>
+        </div>
+        <div class="page-hint"><span class="page-hint-icon">💡</span>联系方式仅在双方同意交换后才会展示给对方</div>
+    </div>
+</div>
+
+<div class="bottom-bar">
+    <div class="bottom-btn-wrapper">
+        <button class="prev-btn" id="prevBtn" style="display: none;"><span>←</span><span>上一页</span></button>
+        <button class="next-btn" id="nextBtn"><span>下一页</span><span>→</span></button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="success-modal" id="successModal">
+    <div class="success-content">
+        <div class="success-icon">✓</div>
+        <div class="success-title">提交成功</div>
+        <div class="success-desc">你的交友问卷已成功提交<br>我们将在每周匹配后<br>通知你结果</div>
+        <a href="index.html" class="success-btn">返回首页</a>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://sysudate-data-rumzgdjkdp.cn-hangzhou.fcapp.run";
+    const TOTAL_STEPS = 5;
+    let currentStep = 1;
+    let formData = JSON.parse(localStorage.getItem('friendSurveyData') || '{}');
+    let userAccount = null;
+    let authToken = null;
+
+    function checkAuth() {
+        authToken = localStorage.getItem('token');
+        if (!authToken) {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+            return false;
+        }
+        const userStr = localStorage.getItem('user');
+        if (userStr) userAccount = JSON.parse(userStr);
+        return true;
+    }
+
+    function getAuthHeaders() {
+        return authToken ? { 'Authorization': 'Bearer ' + authToken } : {};
+    }
+
+    function handleApiResponse(data) {
+        if (data.code === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+            return true;
+        }
+        return false;
+    }
+
+    function getSchoolFromEmail(email) {
+        if (!email) return '';
+        if (email.endsWith('mail.sysu.edu.cn') || email.endsWith('mail2.sysu.edu.cn')) return '中山大学';
+        if (email.endsWith('scut.edu.cn')) return '华南理工大学';
+        return '';
+    }
+
+    const stepRequiredFields = {
+        1: ['sex', 'grade', 'campus', 'major', 'school_prefer'],
+        2: ['friend_goal'],
+        3: [],
+        4: [],
+        5: ['contact_info']
+    };
+
+    function init() {
+        if (!checkAuth()) return;
+
+        if (userAccount) {
+            formData['user_id'] = userAccount.id || userAccount.user_id || '';
+            formData['email'] = userAccount.email || '';
+            formData['my_school'] = getSchoolFromEmail(userAccount.email);
+            if (userAccount.nickname && !formData['nickname']) {
+                formData['nickname'] = userAccount.nickname;
+            }
+        }
+
+        initOptionButtons();
+        initMultiSelectTags();
+        initSelectFields();
+        initInputFields();
+        initTextareaFields();
+        initPhotoUpload();
+        restoreDraft();
+        restoreFormData();
+        updateStepUI();
+    }
+
+    function initOptionButtons() {
+        document.querySelectorAll('.option-group, .option-row').forEach(group => {
+            const field = group.dataset.field;
+            group.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    formData[field] = btn.dataset.value;
+                    saveData();
+                });
+            });
+        });
+    }
+
+    function initMultiSelectTags() {
+        document.querySelectorAll('.tags-container[data-multi="true"]').forEach(container => {
+            const field = container.dataset.field;
+            container.querySelectorAll('.tag-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const isSelected = btn.classList.contains('selected');
+                    if (btn.dataset.value === '不限') {
+                        container.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
+                        if (!isSelected) btn.classList.add('selected');
+                    } else {
+                        const unlimitedBtn = container.querySelector('.tag-btn[data-value="不限"]');
+                        if (unlimitedBtn) unlimitedBtn.classList.remove('selected');
+                        btn.classList.toggle('selected');
+                    }
+                    const selected = [...container.querySelectorAll('.tag-btn.selected')].map(b => b.dataset.value);
+                    formData[field] = selected.length > 0 ? selected : null;
+                    saveData();
+                });
+            });
+        });
+    }
+
+    function initSelectFields() {
+        document.querySelectorAll('.select-field').forEach(select => {
+            select.addEventListener('change', () => {
+                formData[select.dataset.field] = select.value;
+                saveData();
+            });
+        });
+    }
+
+    function initInputFields() {
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('input', () => {
+                formData[input.dataset.field] = input.value;
+                saveData();
+            });
+        });
+    }
+
+    function initTextareaFields() {
+        document.querySelectorAll('.textarea-field').forEach(textarea => {
+            textarea.addEventListener('input', () => {
+                formData[textarea.dataset.field] = textarea.value;
+                saveData();
+            });
+        });
+    }
+
+    function initPhotoUpload() {
+        const uploadArea = document.getElementById('uploadArea');
+        const photoInput = document.getElementById('photoInput');
+        const preview = document.getElementById('photoPreview');
+        if (!formData['photos']) formData['photos'] = [];
+
+        uploadArea?.addEventListener('click', () => photoInput?.click());
+        photoInput?.addEventListener('change', () => handleFiles(photoInput.files));
+
+        function handleFiles(files) {
+            const maxPhotos = 3;
+            const currentCount = formData['photos'].length;
+            Array.from(files).slice(0, maxPhotos - currentCount).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const img = new Image();
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    img.onload = () => {
+                        let width = img.width, height = img.height;
+                        const maxWidth = 800;
+                        if (width > maxWidth) { height = (height * maxWidth) / width; width = maxWidth; }
+                        canvas.width = width; canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedData = canvas.toDataURL('image/jpeg', 0.7);
+                        formData['photos'].push(compressedData);
+                        saveData();
+                        const item = document.createElement('div');
+                        item.className = 'preview-item';
+                        item.innerHTML = `<img src="${compressedData}" alt="照片"><div class="preview-remove">×</div>`;
+                        preview.appendChild(item);
+                        item.querySelector('.preview-remove').addEventListener('click', () => {
+                            const idx = formData['photos'].indexOf(compressedData);
+                            if (idx > -1) { formData['photos'].splice(idx, 1); saveData(); }
+                            item.remove();
+                        });
+                    };
+                    img.src = URL.createObjectURL(file);
+                }
+            });
+        }
+
+        if (formData['photos']?.length > 0) {
+            formData['photos'].forEach(src => {
+                const item = document.createElement('div');
+                item.className = 'preview-item';
+                item.innerHTML = `<img src="${src}" alt="照片"><div class="preview-remove">×</div>`;
+                preview.appendChild(item);
+                item.querySelector('.preview-remove').addEventListener('click', () => {
+                    const idx = formData['photos'].indexOf(src);
+                    if (idx > -1) { formData['photos'].splice(idx, 1); saveData(); }
+                    item.remove();
+                });
+            });
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('friendSurveyData', JSON.stringify(formData));
+    }
+
+    function restoreDraft() {
+        const draft = JSON.parse(localStorage.getItem('friendSurveyData') || '{}');
+        if (Object.keys(draft).length === 0) return;
+        document.querySelectorAll('.input-field').forEach(input => {
+            const field = input.dataset.field;
+            if (draft[field] !== undefined) input.value = draft[field];
+        });
+        document.querySelectorAll('.textarea-field').forEach(textarea => {
+            const field = textarea.dataset.field;
+            if (draft[field] !== undefined) textarea.value = draft[field];
+        });
+        document.querySelectorAll('.select-field').forEach(select => {
+            const field = select.dataset.field;
+            if (draft[field] !== undefined) select.value = draft[field];
+        });
+    }
+
+    function restoreFormData() {
+        document.querySelectorAll('.option-group, .option-row').forEach(group => {
+            const field = group.dataset.field;
+            if (formData[field]) {
+                group.querySelectorAll('.option-btn').forEach(btn => {
+                    if (btn.dataset.value === formData[field]) btn.classList.add('selected');
+                });
+            }
+        });
+        document.querySelectorAll('.tags-container').forEach(container => {
+            const field = container.dataset.field;
+            if (formData[field] && Array.isArray(formData[field])) {
+                container.querySelectorAll('.tag-btn').forEach(btn => {
+                    if (formData[field].includes(btn.dataset.value)) btn.classList.add('selected');
+                });
+            }
+        });
+    }
+
+    function updateStepUI() {
+        const displayStep = currentStep;
+        document.getElementById('stepText').textContent = `STEP ${String(displayStep).padStart(2, '0')} / 05`;
+        document.getElementById('progressFill').style.width = `${(currentStep / 5) * 100}%`;
+        document.querySelectorAll('.step-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(`step${currentStep}`).classList.add('active');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        prevBtn.style.display = currentStep > 1 ? 'flex' : 'none';
+        if (currentStep === TOTAL_STEPS) {
+            nextBtn.innerHTML = '<span>提交问卷</span><span>✓</span>';
+            nextBtn.classList.add('submit-btn');
+        } else {
+            nextBtn.innerHTML = '<span>下一页</span><span>→</span>';
+            nextBtn.classList.remove('submit-btn');
+        }
+    }
+
+    function validateCurrentStep() {
+        const required = [...(stepRequiredFields[currentStep] || [])];
+        for (const field of required) {
+            const value = formData[field];
+            if (!value || (Array.isArray(value) && value.length === 0) || (typeof value === 'string' && !value.trim())) {
+                showToast('请填写所有必填项', true);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = isError ? 'toast show error' : 'toast show';
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        if (currentStep > 1) { currentStep--; updateStepUI(); }
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', async () => {
+        if (!validateCurrentStep()) return;
+        if (currentStep === TOTAL_STEPS) {
+            const btn = document.getElementById('nextBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>提交中...</span>';
+            try {
+                if (!formData['contact_info']) {
+                    showToast('请填写联系方式', true);
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>提交问卷</span><span>✓</span>';
+                    return;
+                }
+                if (userAccount) {
+                    formData['user_id'] = userAccount.id || userAccount.user_id || '';
+                    formData['email'] = userAccount.email || '';
+                    formData['my_school'] = getSchoolFromEmail(userAccount.email);
+                }
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                    body: JSON.stringify({ action: 'submitFriendSurvey', data: formData })
+                });
+                const result = await response.json();
+                if (handleApiResponse(result)) return;
+                if (result.code === 200) {
+                    localStorage.removeItem('friendSurveyData');
+                    document.getElementById('successModal').classList.add('show');
+                } else {
+                    showToast(result.msg || '提交失败，请重试', true);
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>提交问卷</span><span>✓</span>';
+                }
+            } catch (error) {
+                console.error('提交失败:', error);
+                showToast('网络异常，请重试', true);
+                btn.disabled = false;
+                btn.innerHTML = '<span>提交问卷</span><span>✓</span>';
+            }
+        } else {
+            currentStep++;
+            updateStepUI();
+        }
+    });
+
+    window.addEventListener('beforeunload', (e) => {
+        if (Object.keys(formData).length > 0) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    init();
+</script>
+</body>
+</html>
