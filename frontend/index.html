@@ -1533,6 +1533,7 @@
         <div class="btn-group">
             <button class="btn-primary" id="btnLove"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>恋爱板块</button>
             <button class="btn-primary" id="btnFriend"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>交友板块</button>
+            <button class="btn-primary" id="btnQuery"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>查询序列号</button>
             <button class="btn-primary" id="btnProfile"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>我的</button>
             <button class="btn-primary" id="btnSupport">💖 大发善心</button>
         </div>
@@ -1746,6 +1747,7 @@
     // DOM 元素
     const btnLove = document.getElementById("btnLove");
     const btnFriend = document.getElementById("btnFriend");
+    const btnQuery = document.getElementById("btnQuery");
     const btnProfile = document.getElementById("btnProfile");
     const btnSupport = document.getElementById("btnSupport");
     const loveMenuModal = document.getElementById("loveMenuModal");
@@ -1873,6 +1875,7 @@
     // 事件绑定
     btnLove.addEventListener("click", openLoveMenu);
     btnFriend.addEventListener("click", openFriendMenu);
+    btnQuery.addEventListener("click", () => { window.location.href = "query.html"; });
     btnProfile.addEventListener("click", goToProfile);
     btnSupport.addEventListener("click", openSupportModal);
 

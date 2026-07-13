@@ -57,6 +57,14 @@
         .card-action:hover { background: rgba(0,88,38,0.06); }
         .card-action.danger { color: var(--sysu-red); }
         .card-action.danger:hover { background: rgba(166,55,45,0.06); }
+        .serial-list { display: flex; flex-direction: column; gap: 12px; }
+        .serial-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; background: rgba(0,88,38,0.04); border: 1px solid var(--border-soft); border-radius: 14px; }
+        .serial-code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 14px; font-weight: 600; color: var(--sysu-green); word-break: break-all; }
+        .serial-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .serial-action { padding: 8px 12px; border-radius: 10px; background: var(--sysu-green); color: white; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+        .serial-action:hover { background: var(--sysu-green-light); }
+        .serial-action.secondary { background: var(--bg-paper); color: var(--text-secondary); border: 1px solid var(--border-soft); }
+        .serial-action.secondary:hover { border-color: var(--sysu-green); color: var(--sysu-green); }
 
         .survey-card { display: flex; align-items: center; justify-content: space-between; }
         .survey-info { flex: 1; }
@@ -156,6 +164,8 @@
             .match-actions { flex-direction: column; }
             .match-actions button { width: 100%; justify-content: center; }
             .card { padding: 16px; }
+            .serial-item { align-items: flex-start; flex-direction: column; }
+            .serial-actions { width: 100%; justify-content: flex-end; }
             .card h2 { font-size: 16px; }
             .info-grid { grid-template-columns: 1fr; gap: 8px; }
             .info-item-label { font-size: 12px; }
@@ -230,6 +240,14 @@
                 <div class="card-label">账号操作</div>
                 <div class="card-action danger" onclick="openDeleteModal()">注销账号</div>
             </div>
+        </div>
+    </div>
+
+    <!-- 我的序列号 -->
+    <div class="section">
+        <div class="section-title"><div class="section-icon">#</div>我的序列号</div>
+        <div class="card" id="serialContainer">
+            <div class="empty-state" style="padding:20px;">加载中...</div>
         </div>
     </div>
 
@@ -417,24 +435,67 @@
     function init() {
         if (!checkAuth()) return;
         renderProfile();
+        loadAccountProfile();
         loadSurveyStatus();
         loadMatchResults();
-        loadMatchingStatus();
     }
 
-    async function loadMatchingStatus() {
+    async function loadAccountProfile() {
         try {
             const res = await fetch(`${API_URL}/account/me`, { headers: getAuthHeaders() });
             const data = await res.json();
             if (data.code === 200 && data.user) {
+                currentUser = { ...(currentUser || {}), ...data.user };
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                renderProfile();
+                renderSerials(data.user.serials || []);
                 const joinLove = data.user.join_matching !== false;
                 const joinFriend = data.user.join_friend_matching !== false;
                 document.getElementById('loveMatchingToggle').checked = joinLove;
                 document.getElementById('friendMatchingToggle').checked = joinFriend;
                 updateMatchingStatusUI('love', joinLove);
                 updateMatchingStatusUI('friend', joinFriend);
+            } else if (data.code === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+            } else {
+                renderSerials([]);
             }
-        } catch (e) { console.error('loadMatchingStatus error:', e); }
+        } catch (e) {
+            console.error('loadAccountProfile error:', e);
+            renderSerials([]);
+        }
+    }
+
+    function renderSerials(serials) {
+        const container = document.getElementById('serialContainer');
+        if (!container) return;
+        if (!serials || serials.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="padding:20px;">
+                    <div class="empty-text">你还没有绑定或提交任何序列号</div>
+                    <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;">
+                        <a class="serial-action" href="survey.html">填写问卷</a>
+                        <a class="serial-action secondary" href="bind.html">绑定序列号</a>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        container.innerHTML = `
+            <div class="serial-list">
+                ${serials.map(serial => `
+                    <div class="serial-item">
+                        <div class="serial-code">${escapeHtml(serial)}</div>
+                        <div class="serial-actions">
+                            <a class="serial-action secondary" href="modify.html?serial=${encodeURIComponent(serial)}">修改</a>
+                            <a class="serial-action" href="query.html?serial=${encodeURIComponent(serial)}">查看</a>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
     }
 
     function updateMatchingStatusUI(type, active) {

@@ -1,34 +1,19 @@
-﻿# Dependencies and local environments
-node_modules/
-.venv/
-venv/
-__pycache__/
-*.pyc
-
-# Local-only secrets
 .env
 .env.*
 !.env.example
-*credentials*.txt
-*secret*.txt
-*password*.txt
-LOCAL_SECRETS_DO_NOT_UPLOAD/
-
-# Local tooling / generated files
-.codex/
-.agents/
-.agent/
-.git.agent/
-.claude/
-.idea/
-.ossutil_checkpoint/
+node_modules/
+fc-code/bin/
 *.log
-*.tmp
-*.pcm
+smoke.out
+smoke.err
+*.zip
+*.7z
+*.rar
+*.sql.gz
+*.sql.zip
+cloud_compare/
+local_before_sync/
+proof_material/database/
+data_processing/
 .DS_Store
 Thumbs.db
-
-# SYSUDate deployment/runtime bundles
-fc-code/bin/
-fc-code/fc-code.zip
-

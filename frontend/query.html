@@ -353,10 +353,12 @@ function handleApiResponse(data) {
 
 document.addEventListener('DOMContentLoaded', () => {
     if (checkAuth()) {
-        if (targetUserId) {
+        if (targetSerial) {
+            queryBySerial(targetSerial);
+        } else if (targetUserId) {
             queryByUserId(targetUserId);
         } else {
-            resultArea.innerHTML = '<div class="error">❌ 缺少用户参数</div>';
+            renderSerialSearchForm();
         }
     }
 });
@@ -432,10 +434,34 @@ const MODULES = [
 ];
 
 const urlParams = new URLSearchParams(window.location.search);
+const targetSerial = urlParams.get('serial') || '';
 const targetUserId = urlParams.get('userId') || '';
 const resultArea = document.getElementById('resultArea');
 const imageModal = document.getElementById('imageModal');
 const modalImage = document.getElementById('modalImage');
+
+function renderSerialSearchForm(message = '') {
+    resultArea.innerHTML = `
+        <form class="input-area" id="serialSearchForm">
+            <input type="text" id="serialLookupInput" placeholder="输入对方序列号" autocomplete="off">
+            <button type="submit">查询</button>
+        </form>
+        ${message ? `<div class="error">${escapeHtml(message)}</div>` : '<div class="empty-state">请输入对方提供的序列号，查看对方愿意公开的信息。</div>'}
+    `;
+    document.getElementById('serialSearchForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const serial = document.getElementById('serialLookupInput').value.trim();
+        if (!serial) {
+            renderSerialSearchForm('请先输入序列号');
+            return;
+        }
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set('serial', serial);
+        nextUrl.searchParams.delete('userId');
+        window.history.replaceState({}, '', nextUrl.toString());
+        queryBySerial(serial);
+    });
+}
 
 async function queryByUserId(userId) {
     resultArea.innerHTML = '<div class="loading">⏳ 正在查询公开信息...</div>';
@@ -454,6 +480,26 @@ async function queryByUserId(userId) {
     } catch (err) {
         console.error(err);
         resultArea.innerHTML = '<div class="error">❌ 查询失败，请稍后重试</div>';
+    }
+}
+
+async function queryBySerial(serial) {
+    resultArea.innerHTML = '<div class="loading">⏳ 正在查询公开信息...</div>';
+    try {
+        const res = await fetch(`${API_URL}/?action=query&serial=${encodeURIComponent(serial)}`, {
+            headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const result = await res.json();
+        if (handleApiResponse(result)) return;
+        if (result.code !== 200 || !result.data) {
+            renderSerialSearchForm(result.msg || '未找到该序列号对应的信息');
+            return;
+        }
+        renderProfile(result.data);
+    } catch (err) {
+        console.error(err);
+        renderSerialSearchForm('查询失败，请稍后重试');
     }
 }
 

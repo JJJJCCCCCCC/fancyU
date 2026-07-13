@@ -954,7 +954,7 @@
         <h1 class="page-title">联系方式</h1>
         <div class="card">
             <div class="card-label">添加联系方式 <span class="required-mark">*必填</span></div>
-            <div class="sub-label">至少填写一种联系方式（已登录用户可跳过，将自动使用账号邮箱）</div>
+            <div class="sub-label">至少填写一种联系方式</div>
             <div class="contact-add-row">
                 <select class="contact-method-select" id="contactMethodAdd">
                     <option value="">选择方式</option>
@@ -1137,7 +1137,9 @@
         if (!checkAuth()) return;
 
         if (userAccount) {
+            formData['user_id'] = userAccount.id || userAccount.user_id || '';
             formData['email'] = userAccount.email || '';
+            formData['my_school'] = getSchoolFromEmail(userAccount.email);
             if (userAccount.nickname && !formData['nickname']) {
                 formData['nickname'] = userAccount.nickname;
             }
@@ -1156,7 +1158,6 @@
         initContactFields();
         restoreDraft();
         restoreFormData();
-        syncFormDataFromDOM();
         updateStepUI();
     }
 
@@ -1875,57 +1876,6 @@
         localStorage.setItem('friendSurveyData', JSON.stringify(formData));
     }
 
-    // 从 DOM 同步 formData（用于恢复后确保数据一致）
-    function syncFormDataFromDOM() {
-        document.querySelectorAll('.input-field').forEach(input => {
-            const field = input.dataset.field;
-            if (input.value) formData[field] = input.value;
-        });
-        document.querySelectorAll('.textarea-field').forEach(textarea => {
-            const field = textarea.dataset.field;
-            if (textarea.value) formData[field] = textarea.value;
-        });
-        document.querySelectorAll('.select-field').forEach(select => {
-            const field = select.dataset.field;
-            if (field && select.value) formData[field] = select.value;
-        });
-        document.querySelectorAll('.number-input').forEach(input => {
-            const field = input.dataset.field;
-            if (input.value) formData[field] = input.value;
-        });
-        document.querySelectorAll('.slider-input').forEach(slider => {
-            const field = slider.dataset.field;
-            if (slider.value) formData[field] = slider.value;
-        });
-        document.querySelectorAll('.option-group, .option-row').forEach(group => {
-            const field = group.dataset.field;
-            const selected = group.querySelector('.option-btn.selected');
-            if (field && selected) formData[field] = selected.dataset.value;
-        });
-        document.querySelectorAll('.tags-container').forEach(container => {
-            const field = container.dataset.field;
-            if (!field) return;
-            const isMulti = container.dataset.multi === 'true';
-            const selectedBtns = container.querySelectorAll('.tag-btn.selected');
-            if (isMulti) {
-                formData[field] = Array.from(selectedBtns).map(b => b.dataset.value);
-            } else if (selectedBtns.length > 0) {
-                formData[field] = selectedBtns[0].dataset.value;
-            }
-        });
-        // ownCampus 没有 data-field，单独处理
-        const ownCampusEl = document.getElementById('ownCampus');
-        if (ownCampusEl && ownCampusEl.value) {
-            formData['own_campus'] = ownCampusEl.value;
-        }
-        // 恢复校区卡片显示状态
-        const schoolEl = document.getElementById('schoolSelect');
-        const ownCampusCard = document.getElementById('ownCampusCard');
-        if (schoolEl && schoolEl.value && SCHOOL_CAMPUSES[schoolEl.value]) {
-            ownCampusCard.style.display = 'block';
-        }
-    }
-
     function restoreDraft() {
         const draft = JSON.parse(localStorage.getItem('friendSurveyData') || '{}');
         if (Object.keys(draft).length === 0) return;
@@ -2018,20 +1968,9 @@
             btn.innerHTML = '<span>提交中...</span>';
             try {
                 if (userAccount) {
+                    formData['user_id'] = userAccount.id || userAccount.user_id || '';
                     formData['email'] = userAccount.email || '';
-
-                    // 如果没有填写联系方式，自动使用账号邮箱
-                    if (!formData['contact_entries'] || formData['contact_entries'].length === 0) {
-                        formData['contact_entries'] = [{ method: '邮箱', value: userAccount.email }];
-                    }
-                }
-
-                // 从联系方式中提取邮箱，设置 contact_email 字段
-                const emailEntry = formData['contact_entries']?.find(e => e.method === '邮箱');
-                if (emailEntry) {
-                    formData['contact_email'] = emailEntry.value;
-                } else if (userAccount) {
-                    formData['contact_email'] = userAccount.email;
+                    formData['my_school'] = getSchoolFromEmail(userAccount.email);
                 }
 
                 const response = await fetch(API_URL, {

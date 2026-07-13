@@ -171,7 +171,7 @@ async function authMiddleware(req, res, next) {
     next();
 }
 
-async function parseJsonArray(value) {
+function parseJsonArray(value) {
     if (value === null || value === undefined || value === '') return [];
     if (Array.isArray(value)) return value;
     if (typeof value === 'string') {

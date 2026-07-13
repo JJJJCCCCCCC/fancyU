@@ -1,17 +1,14 @@
-#!/bin/bash
+#!/bin/sh
+set -eu
 
-# 上传前端页面到 OSS
-# Bucket: sysu-date (cn-hongkong)
-
-echo "开始上传前端页面到 OSS..."
-
-for f in index login register bind forgot-password profile dashboard survey friend_survey modify query admin update; do
-    if [ -f "frontend/${f}.html" ]; then
-        echo "上传 ${f}.html..."
-        aliyun oss cp "frontend/${f}.html" "oss://sysu-date/${f}.html" --region cn-hongkong --force
-    else
-        echo "跳过 ${f}.html (文件不存在)"
-    fi
+# Upload the public frontend pages to the original OSS bucket.
+# Requires the Aliyun CLI to be configured by the operator.
+for page in \
+  admin bind dashboard forgot-password friend_survey index login modify \
+  profile query register survey terms update
+do
+  aliyun oss cp "frontend/${page}.html" \
+    "oss://sysu-date/${page}.html" \
+    --region cn-hongkong \
+    --force
 done
-
-echo "上传完成!"
