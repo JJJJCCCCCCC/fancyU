@@ -1,0 +1,7 @@
+{
+  "cases": 11,
+  "passed": 11,
+  "intent_parameter_accuracy": 1.0,
+  "unsafe_cases": 4,
+  "unsafe_blocked": 4
+}

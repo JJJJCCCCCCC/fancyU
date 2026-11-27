@@ -208,7 +208,7 @@
         }
 
         /* ========== 暗色模式 ========== */
-        @media (prefers-color-scheme: dark) {
+        @media not all {
             body { background: #0f1a14; }
             .header { background: linear-gradient(135deg, #001a0f 0%, #00331a 100%); }
             .header h1 { color: #4ade80; }
@@ -241,6 +241,7 @@
             * { animation: none !important; transition: none !important; }
         }
     </style>
+    <script src="config.js"></script>
 </head>
 <body>
 
@@ -352,7 +353,7 @@
 Chart.defaults.font.family = '"PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif';
 Chart.defaults.color = '#64748b';
 
-const API = 'https://sysudate-data-rumzgdjkdp.cn-hangzhou.fcapp.run';
+    const API = window.SYSUDATE_CONFIG.apiBase;
 let adminToken = null;
 let currentPage = 1;
 let currentSort = 'created_at';

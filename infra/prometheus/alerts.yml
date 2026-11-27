@@ -1,0 +1,24 @@
+groups:
+  - name: sysudate
+    rules:
+      - alert: SysudateApiDown
+        expr: up{job="sysudate-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: SYSUDate Java API is unavailable
+      - alert: SysudateAiDown
+        expr: up{job="sysudate-ai"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: SYSUDate AI service is unavailable
+      - alert: SysudateAiFallbackSpike
+        expr: increase(sysudate_ai_fallback_total{reason="provider_error"}[10m]) > 20
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: AI provider fallback volume is elevated

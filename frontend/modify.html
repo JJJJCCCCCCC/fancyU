@@ -722,7 +722,7 @@
         }
 
         /* ========== 暗色模式 ========== */
-        @media (prefers-color-scheme: dark) {
+        @media not all {
             body { background: #0f1a14; }
             .container { color: #e8f0eb; }
             .header { border-bottom-color: #2a4a3a; }
@@ -822,6 +822,7 @@
             cursor: not-allowed;
         }
     </style>
+    <script src="config.js"></script>
 </head>
 <body>
 <div class="container">
@@ -1462,7 +1463,7 @@
 </div>
 
 <script>
-    const API_URL = "https://sysudate-data-rumzgdjkdp.cn-hangzhou.fcapp.run";
+    const API_URL = window.SYSUDATE_CONFIG.apiBase;
     const TOTAL_STEPS = 6;
     let currentStep = 0;
     let formData = {};

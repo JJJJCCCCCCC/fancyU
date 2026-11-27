@@ -283,7 +283,7 @@
         }
 
         /* ========== 暗色模式 ========== */
-        @media (prefers-color-scheme: dark) {
+        @media not all {
             body { background: #0f1a14; }
             .container { background: #1a2e24; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
             h1 { color: #4ade80; }
@@ -302,6 +302,7 @@
             * { animation: none !important; transition: none !important; }
         }
     </style>
+    <script src="config.js"></script>
 </head>
 <body>
 <div class="container">
@@ -311,7 +312,7 @@
         </a>
     </div>
     <h1>🔍 中意你 · 查询心意</h1>
-    <div class="sub">查看对方的公开信息。<br>系统会根据对方填写的 “关于展示” 选项自动控制可见内容；若对方未设置，则默认全部公开。</div>
+    <div class="sub">查看对方的公开信息。<br>系统会根据对方填写的 “关于展示” 选项自动控制可见内容；未设置的字段默认不公开。</div>
     <div id="resultArea">
         <div class="empty-state">💡 正在加载对方信息...</div>
     </div>
@@ -320,7 +321,7 @@
     <img id="modalImage" src="" alt="查看大图">
 </div>
 <script>
-const API_URL = "https://sysudate-data-rumzgdjkdp.cn-hangzhou.fcapp.run";
+const API_URL = window.SYSUDATE_CONFIG.apiBase;
 let authToken = null;
 let userAccount = null;
 

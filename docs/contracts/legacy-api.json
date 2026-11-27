@@ -1,0 +1,49 @@
+{
+  "rootActions": [
+    "generateSerial",
+    "query",
+    "queryByUserId",
+    "getSurveyData",
+    "sendCode",
+    "checkCode",
+    "verifyMatch",
+    "submitSurvey",
+    "submitFriendSurvey",
+    "updateSurvey",
+    "modifySurvey"
+  ],
+  "accountRoutes": [
+    "/account/register",
+    "/account/bind",
+    "/account/login",
+    "/account/me",
+    "/account/change-password",
+    "/account/reset-password",
+    "/account/change-username",
+    "/account/change-contact-email",
+    "/account/delete",
+    "/account/check-username",
+    "/account/toggle-matching",
+    "/account/toggle-friend-matching",
+    "/account/survey-status",
+    "/account/matches",
+    "/account/exchange-contact",
+    "/account/withdraw-consent"
+  ],
+  "adminRoutes": [
+    "/admin/login",
+    "/admin/users",
+    "/admin/user/{serial}",
+    "/admin/stats",
+    "/admin/chat/list",
+    "/admin/chat/save",
+    "/admin/chat/{id}",
+    "/admin/complaints",
+    "/admin/complaints/{id}/status",
+    "/llm/chat"
+  ],
+  "publicRoutes": [
+    "/api/complaint",
+    "/api/v1/system/health"
+  ]
+}

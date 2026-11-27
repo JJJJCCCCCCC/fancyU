@@ -176,7 +176,7 @@
         }
 
         /* ========== 暗色模式 ========== */
-        @media (prefers-color-scheme: dark) {
+        @media not all {
             body { background: #0f1a14; }
             .container { color: #e8f0eb; }
             .header { border-bottom-color: #2a4a3a; }
@@ -206,6 +206,7 @@
             * { animation: none !important; transition: none !important; }
         }
     </style>
+    <script src="config.js"></script>
 </head>
 <body>
 <div class="container">
@@ -352,7 +353,7 @@
         </div>
         <div class="form-group">
             <label class="form-label">新密码</label>
-            <input type="password" class="form-input" id="newPassword" placeholder="输入新密码（至少6位）">
+                    <input type="password" class="form-input" id="newPassword" placeholder="输入新密码（至少8位）">
         </div>
         <div class="form-group">
             <label class="form-label">确认新密码</label>
@@ -389,7 +390,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    const API_URL = "https://sysudate-data-rumzgdjkdp.cn-hangzhou.fcapp.run";
+    const API_URL = window.SYSUDATE_CONFIG.apiBase;
     let currentUser = null;
     let authToken = null;
     let matchData = { love: [], friend: [] };
@@ -759,7 +760,7 @@
         const newPwd = document.getElementById('newPassword').value;
         const confirmPwd = document.getElementById('confirmPassword').value;
         if (!oldPwd || !newPwd || !confirmPwd) { showToast('请填写所有密码字段', true); return; }
-        if (newPwd.length < 6) { showToast('新密码至少6位', true); return; }
+        if (newPwd.length < 8) { showToast('新密码至少8位', true); return; }
         if (newPwd !== confirmPwd) { showToast('两次输入的新密码不一致', true); return; }
         try {
             const res = await fetch(`${API_URL}/account/change-password`, {

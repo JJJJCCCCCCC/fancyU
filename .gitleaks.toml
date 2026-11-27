@@ -1,0 +1,8 @@
+[[allowlists]]
+description = "Generated build output is not part of the source release"
+paths = ['''(^|/)target/''']
+
+[[allowlists]]
+description = "Internal Prometheus endpoint documented as an example"
+regexTarget = "match"
+regexes = ['''http://api:9091/actuator/prometheus''']

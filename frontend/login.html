@@ -445,7 +445,7 @@
         }
 
         /* ========== 暗色模式 ========== */
-        @media (prefers-color-scheme: dark) {
+        @media not all {
             :root {
                 --bg-paper: #0a1210;
                 --bg-paper-warm: #0f1a14;
@@ -506,6 +506,7 @@
             * { animation: none !important; transition: none !important; }
         }
     </style>
+    <script src="config.js"></script>
 </head>
 <body>
     <div class="bg-pattern"></div>
@@ -570,7 +571,7 @@
                 </div>
                 <div class="form-group">
                     <label>密码</label>
-                    <input type="password" id="regPassword" placeholder="设置密码（至少6位）" required minlength="6">
+                    <input type="password" id="regPassword" placeholder="设置密码（至少8位）" required minlength="8">
                 </div>
                 <div class="form-group">
                     <label>确认密码</label>
@@ -608,7 +609,7 @@
                 </div>
                 <div class="form-group">
                     <label>新密码</label>
-                    <input type="password" id="forgotPassword" placeholder="新密码（至少6位）" required minlength="6">
+                    <input type="password" id="forgotPassword" placeholder="新密码（至少8位）" required minlength="8">
                 </div>
                 <div class="form-group">
                     <label>确认新密码</label>
@@ -627,7 +628,7 @@
     </div>
 
     <script>
-        const API_BASE = 'https://sysudate-data-rumzgdjkdp.cn-hangzhou.fcapp.run';
+        const API_BASE = window.SYSUDATE_CONFIG.apiBase;
 
         const SCHOOL_MAP = {
             'mail2.sysu.edu.cn': { name: '中山大学', key: 'sysu', class: 'sysu' },
@@ -864,8 +865,8 @@
                 showMsg('两次密码不一致', 'error', 'registerMsg');
                 return;
             }
-            if (password.length < 6) {
-                showMsg('密码至少6位', 'error', 'registerMsg');
+            if (password.length < 8) {
+                showMsg('密码至少8位', 'error', 'registerMsg');
                 return;
             }
 
@@ -927,8 +928,8 @@
                 showMsg('两次密码不一致', 'error', 'forgotMsg');
                 return;
             }
-            if (password.length < 6) {
-                showMsg('密码至少6位', 'error', 'forgotMsg');
+            if (password.length < 8) {
+                showMsg('密码至少8位', 'error', 'forgotMsg');
                 return;
             }
 

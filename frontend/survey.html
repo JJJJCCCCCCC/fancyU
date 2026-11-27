@@ -206,7 +206,7 @@
         }
 
         /* ========== 暗色模式 ========== */
-        @media (prefers-color-scheme: dark) {
+        @media not all {
             body { background: #0f1a14; }
             .container { color: #e8f0eb; }
             .header { border-bottom-color: #2a4a3a; }
@@ -272,6 +272,7 @@
             * { animation: none !important; transition: none !important; }
         }
     </style>
+    <script src="config.js"></script>
 </head>
 <body>
 <div class="container">
@@ -731,7 +732,7 @@
 </div>
 
 <script>
-    const API_URL = "https://sysudate-data-rumzgdjkdp.cn-hangzhou.fcapp.run";
+    const API_URL = window.SYSUDATE_CONFIG.apiBase;
     const urlParams = new URLSearchParams(window.location.search);
     const surveyType = urlParams.get('type') || 'general';
     const verifiedEmail = urlParams.get('email') || '';

@@ -1,0 +1,50 @@
+{
+  "annotations": {"list": []},
+  "editable": false,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Service availability",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+      "targets": [{"expr": "up{job=~\"sysudate-api|sysudate-ai\"}", "legendFormat": "{{job}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Java HTTP request rate",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0},
+      "targets": [{"expr": "sum(rate(http_server_requests_seconds_count[5m])) by (status)", "legendFormat": "{{status}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "AI request latency",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0},
+      "targets": [{"expr": "histogram_quantile(0.95, sum(rate(sysudate_ai_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p95"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Database pool",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8},
+      "targets": [{"expr": "hikaricp_connections_active", "legendFormat": "active"}, {"expr": "hikaricp_connections_pending", "legendFormat": "pending"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "AI deterministic fallbacks",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8},
+      "targets": [{"expr": "sum by (reason) (rate(sysudate_ai_fallback_total[5m]))", "legendFormat": "{{reason}}"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "JVM memory",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8},
+      "targets": [{"expr": "sum(jvm_memory_used_bytes) by (area)", "legendFormat": "{{area}}"}]
+    }
+  ],
+  "refresh": "15s",
+  "schemaVersion": 41,
+  "tags": ["sysudate"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "title": "SYSUDate Overview",
+  "uid": "sysudate-overview",
+  "version": 1
+}

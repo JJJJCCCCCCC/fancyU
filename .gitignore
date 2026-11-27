@@ -1,6 +1,7 @@
 .env
 .env.*
 !.env.example
+!.env.compose.example
 node_modules/
 fc-code/bin/
 *.log
@@ -17,3 +18,12 @@ proof_material/database/
 data_processing/
 .DS_Store
 Thumbs.db
+.worktrees/
+target/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+.idea/
+*.iml
