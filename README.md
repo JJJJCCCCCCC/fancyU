@@ -177,8 +177,3 @@ python scripts/browser_smoke.py
 - 日志为结构化 JSON；通知日志不输出邮箱、验证码或事件 payload。
 - `fc-code/` 仅用于兼容审计，不构建、不部署、不连接生产数据库。
 
-部署和重新上传边界见
-[docs/deployment/upload-manifest.md](docs/deployment/upload-manifest.md)。
-
-求职项目时间线、简历表述和面试边界见
-[docs/portfolio/project-experience.md](docs/portfolio/project-experience.md)。
