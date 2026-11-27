@@ -20,6 +20,8 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+      - name: Configure the Testcontainers Docker client
+        run: printf 'api.version=1.44\n' > "$HOME/.docker-java.properties"
       - run: mvn -B test
 
   ai:
@@ -50,7 +52,17 @@ jobs:
       - run: cp .env.compose.example .env.compose
       - run: echo 'CORS_ALLOWED_ORIGINS=http://portfolio-smoke.local' >> .env.compose
       - run: docker compose --env-file .env.compose config --quiet
-      - run: docker compose --env-file .env.compose build api ai-service web
+      - name: Build service images
+        run: |
+          for attempt in 1 2 3; do
+            if docker compose --env-file .env.compose build api ai-service web; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              sleep "$((attempt * 20))"
+            fi
+          done
+          exit 1
       - run: pip install -r scripts/requirements.txt
       - run: playwright install --with-deps chromium
       - run: docker compose --profile local-db --env-file .env.compose up -d --wait
