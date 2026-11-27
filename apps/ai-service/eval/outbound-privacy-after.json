@@ -1,0 +1,465 @@
+{
+  "scenarios": 24,
+  "passed": 24,
+  "scenarios_with_marker_leakage": 0,
+  "provider_requests": 12,
+  "no_provider_request_scenarios": 12,
+  "results": [
+    {
+      "case": "count",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数统计\n查询结果：{\"total\": 101, \"male\": 52, \"female\": 49}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "matching",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "matching_stats",
+      "expected_java_intent": "matching_stats",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：匹配参与统计\n查询结果：{\"totalAccounts\": 107, \"totalMatching\": 71, \"byCampus\": [{\"value\": \"深圳校区\", \"count\": 17}, {\"value\": \"广州海珠南校\", \"count\": 23}, {\"value\": \"广州白云三元里\", \"count\": 16}, {\"value\": \"南校园\", \"count\": 9}]}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "sex",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：性别分布\n查询结果：[{\"value\": \"女\", \"count\": 49}, {\"value\": \"男\", \"count\": 52}]"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "campus",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：校区分布\n查询结果：[{\"value\": \"深圳校区\", \"count\": 17}, {\"value\": \"广州海珠南校\", \"count\": 23}, {\"value\": \"广州白云三元里\", \"count\": 16}, {\"value\": \"南校园\", \"count\": 9}]"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "grade",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：年级分布\n查询结果：[{\"value\": \"大五（医学）\", \"count\": 16}, {\"value\": \"研0\", \"count\": 19}]"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "count-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数统计\n查询结果：{\"total\": 101, \"male\": 52, \"female\": 49}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "matching-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "matching_stats",
+      "expected_java_intent": "matching_stats",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：匹配参与统计\n查询结果：{\"totalAccounts\": 107, \"totalMatching\": 71, \"byCampus\": [{\"value\": \"深圳校区\", \"count\": 17}, {\"value\": \"广州海珠南校\", \"count\": 23}, {\"value\": \"广州白云三元里\", \"count\": 16}, {\"value\": \"南校园\", \"count\": 9}]}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "sex-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：性别分布\n查询结果：[{\"value\": \"女\", \"count\": 49}, {\"value\": \"男\", \"count\": 52}]"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "campus-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：校区分布\n查询结果：[{\"value\": \"深圳校区\", \"count\": 17}, {\"value\": \"广州海珠南校\", \"count\": 23}, {\"value\": \"广州白云三元里\", \"count\": 16}, {\"value\": \"南校园\", \"count\": 9}]"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "grade-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：年级分布\n查询结果：[{\"value\": \"大五（医学）\", \"count\": 16}, {\"value\": \"研0\", \"count\": 19}]"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "raw-user-input",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数统计\n查询结果：{\"total\": 101, \"male\": 52, \"female\": 49}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "conversation-history",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数统计\n查询结果：{\"total\": 101, \"male\": 52, \"female\": 49}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "invalid-count-type",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "invalid-count-boolean",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "unexpected-envelope",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "noncanonical-bucket",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "recent-users",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "recent_users",
+      "expected_java_intent": "recent_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "search-users",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "search_users",
+      "expected_java_intent": "search_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "user-detail",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "user_detail",
+      "expected_java_intent": "user_detail",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "mbti-local",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "interests-local",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "blocked-email-export",
+      "status": 400,
+      "expected_status": 400,
+      "java_intent": null,
+      "expected_java_intent": null,
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "blocked-instruction",
+      "status": 400,
+      "expected_status": 400,
+      "java_intent": null,
+      "expected_java_intent": null,
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "unauthorized",
+      "status": 403,
+      "expected_status": 403,
+      "java_intent": null,
+      "expected_java_intent": null,
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    }
+  ]
+}

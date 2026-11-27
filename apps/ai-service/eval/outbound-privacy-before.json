@@ -1,0 +1,565 @@
+{
+  "scenarios": 24,
+  "passed": 14,
+  "scenarios_with_marker_leakage": 9,
+  "provider_requests": 16,
+  "no_provider_request_scenarios": 8,
+  "results": [
+    {
+      "case": "count",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：系统一共多少人？\n查询结果：{'type': 'count', 'title': '合成查询结果', 'data': {'total': 101, 'male': 52, 'female': 49}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "matching",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "matching_stats",
+      "expected_java_intent": "matching_stats",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：匹配统计\n查询结果：{'type': 'stats', 'title': '合成查询结果', 'data': {'totalAccounts': 107, 'totalMatching': 71, 'byCampus': [{'value': '深圳校区', 'count': 17}, {'value': '广州海珠南校', 'count': 23}, {'value': '广州白云三元里', 'count': 16}, {'value': '南校园', 'count': 9}]}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "sex",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：性别分布\n查询结果：{'type': 'stats', 'title': '合成查询结果', 'data': [{'value': '女', 'count': 49}, {'value': '男', 'count': 52}]}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "campus",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：校区分布\n查询结果：{'type': 'stats', 'title': '合成查询结果', 'data': [{'value': '深圳校区', 'count': 17}, {'value': '广州海珠南校', 'count': 23}, {'value': '广州白云三元里', 'count': 16}, {'value': '南校园', 'count': 9}]}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "grade",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：年级分布\n查询结果：{'type': 'stats', 'title': '合成查询结果', 'data': [{'value': '大五（医学）', 'count': 16}, {'value': '研0', 'count': 19}]}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "count-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数\n查询结果：{'type': 'count', 'title': 'fixture-private-title-6915', 'data': {'total': 101, 'male': 52, 'female': 49, 'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}, 'metadata': {'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "contact",
+        "credential",
+        "email",
+        "nickname",
+        "photo",
+        "title"
+      ],
+      "passed": false
+    },
+    {
+      "case": "matching-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "matching_stats",
+      "expected_java_intent": "matching_stats",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：匹配统计\n查询结果：{'type': 'stats', 'title': 'fixture-private-title-6915', 'data': {'totalAccounts': 107, 'totalMatching': 71, 'byCampus': [{'value': '深圳校区', 'count': 17, 'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}, {'value': 'fixture-private-group-label-6245', 'count': 7}, {'value': '广州海珠南校', 'count': 23}, {'value': '广州白云三元里', 'count': 16}, {'value': '南校园', 'count': 9}], 'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}, 'metadata': {'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "contact",
+        "credential",
+        "email",
+        "label",
+        "nickname",
+        "photo",
+        "title"
+      ],
+      "passed": false
+    },
+    {
+      "case": "sex-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：性别分布\n查询结果：{'type': 'stats', 'title': 'fixture-private-title-6915', 'data': [{'value': '女', 'count': 49, 'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}, {'value': 'fixture-private-group-label-6245', 'count': 7}, {'value': '男', 'count': 52}], 'metadata': {'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "contact",
+        "credential",
+        "email",
+        "label",
+        "nickname",
+        "photo",
+        "title"
+      ],
+      "passed": false
+    },
+    {
+      "case": "campus-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：校区分布\n查询结果：{'type': 'stats', 'title': 'fixture-private-title-6915', 'data': [{'value': '深圳校区', 'count': 17, 'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}, {'value': 'fixture-private-group-label-6245', 'count': 7}, {'value': '广州海珠南校', 'count': 23}, {'value': '广州白云三元里', 'count': 16}, {'value': '南校园', 'count': 9}], 'metadata': {'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "contact",
+        "credential",
+        "email",
+        "label",
+        "nickname",
+        "photo",
+        "title"
+      ],
+      "passed": false
+    },
+    {
+      "case": "grade-extra-fields",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：年级分布\n查询结果：{'type': 'stats', 'title': 'fixture-private-title-6915', 'data': [{'value': '大五（医学）', 'count': 16, 'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}, {'value': 'fixture-private-group-label-6245', 'count': 7}, {'value': '研0', 'count': 19}], 'metadata': {'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "contact",
+        "credential",
+        "email",
+        "label",
+        "nickname",
+        "photo",
+        "title"
+      ],
+      "passed": false
+    },
+    {
+      "case": "raw-user-input",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：系统一共多少人？工单备注 prompt-fixture-2931@example.invalid\n查询结果：{'type': 'count', 'title': '合成查询结果', 'data': {'total': 101, 'male': 52, 'female': 49}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "prompt"
+      ],
+      "passed": false
+    },
+    {
+      "case": "conversation-history",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 1,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数\n查询结果：{'type': 'count', 'title': '合成查询结果', 'data': {'total': 101, 'male': 52, 'female': 49}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "invalid-count-type",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数\n查询结果：{'type': 'count', 'title': '合成查询结果', 'data': {'total': 'fixture-private-credential-57209', 'male': 52, 'female': 49}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "credential"
+      ],
+      "passed": false
+    },
+    {
+      "case": "invalid-count-boolean",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数\n查询结果：{'type': 'count', 'title': '合成查询结果', 'data': {'total': 101, 'male': True, 'female': 49}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": false
+    },
+    {
+      "case": "unexpected-envelope",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "count_users",
+      "expected_java_intent": "count_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：用户总数\n查询结果：{'type': 'detail', 'title': 'fixture-private-title-6915', 'data': {'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}, 'metadata': {'email': 'email-fixture-8597@example.invalid', 'contact': 'fixture-contact-number-02371', 'credentials': {'secret': 'fixture-private-credential-57209'}, 'photo': 'https://images.example.invalid/private-photo-8146', 'nickname': 'fixture-private-nickname-6318'}}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "contact",
+        "credential",
+        "email",
+        "nickname",
+        "photo",
+        "title"
+      ],
+      "passed": false
+    },
+    {
+      "case": "noncanonical-bucket",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 0,
+      "provider_requests": [
+        {
+          "model": "qwen3.5-2b",
+          "messages": [
+            {
+              "role": "user",
+              "content": "你是数据分析助手。只能根据给定的脱敏查询结果，用中文简洁回答；不得补充邮箱、联系方式、照片或未提供的信息。\n问题：校区分布\n查询结果：{'type': 'stats', 'title': '合成查询结果', 'data': [{'value': 'fixture-private-group-label-6245', 'count': 7}]}"
+            }
+          ],
+          "temperature": 0.2,
+          "max_tokens": 800
+        }
+      ],
+      "provider_response_used": true,
+      "has_expected_aggregate": true,
+      "detected_markers": [
+        "label"
+      ],
+      "passed": false
+    },
+    {
+      "case": "recent-users",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "recent_users",
+      "expected_java_intent": "recent_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "search-users",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "search_users",
+      "expected_java_intent": "search_users",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "user-detail",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "user_detail",
+      "expected_java_intent": "user_detail",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "mbti-local",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "interests-local",
+      "status": 200,
+      "expected_status": 200,
+      "java_intent": "distribution",
+      "expected_java_intent": "distribution",
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "blocked-email-export",
+      "status": 400,
+      "expected_status": 400,
+      "java_intent": null,
+      "expected_java_intent": null,
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "blocked-instruction",
+      "status": 400,
+      "expected_status": 400,
+      "java_intent": null,
+      "expected_java_intent": null,
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    },
+    {
+      "case": "unauthorized",
+      "status": 403,
+      "expected_status": 403,
+      "java_intent": null,
+      "expected_java_intent": null,
+      "expected_provider_requests": 0,
+      "provider_requests": [],
+      "provider_response_used": false,
+      "has_expected_aggregate": true,
+      "detected_markers": [],
+      "passed": true
+    }
+  ]
+}

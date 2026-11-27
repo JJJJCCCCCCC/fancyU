@@ -7,6 +7,9 @@ from app.config import Settings
 from app.models import Intent, QueryPlan
 from app.provider import ProviderAdapter, is_provider_safe_plan
 
+COUNT_PLAN = QueryPlan(intent=Intent.COUNT_USERS)
+COUNT_RESULT = {"type": "count", "data": {"total": 1, "male": 1, "female": 0}}
+
 
 class _Response:
     def raise_for_status(self) -> None:
@@ -56,7 +59,7 @@ def test_provider_retries_one_transient_failure() -> None:
 
     with patch("app.provider.httpx.AsyncClient", _FlakyClient):
         answer = asyncio.run(
-            adapter.summarize("总共有多少用户", {"total": 1}, "降级回答")
+            adapter.summarize(COUNT_PLAN, COUNT_RESULT, "降级回答")
         )
 
     assert answer == "重试后的回答"
@@ -73,7 +76,7 @@ def test_provider_falls_back_for_non_string_content() -> None:
 
     with patch("app.provider.httpx.AsyncClient", _InvalidContentClient):
         answer = asyncio.run(
-            adapter.summarize("总共有多少用户", {"total": 1}, "降级回答")
+            adapter.summarize(COUNT_PLAN, COUNT_RESULT, "降级回答")
         )
 
     assert answer == "降级回答"

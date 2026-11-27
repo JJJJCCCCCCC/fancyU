@@ -105,7 +105,7 @@ async def chat(
         FALLBACKS.labels("privacy_policy").inc()
         answer = fallback
     else:
-        answer = await provider.summarize(user_messages[-1], result, fallback)
+        answer = await provider.summarize(query_plan, result, fallback)
         if answer == fallback:
             FALLBACKS.labels("provider_error").inc()
     return {

@@ -158,8 +158,9 @@ python scripts/browser_smoke.py
 
 - Java：clean 构建下 `45` 个非 Testcontainers 测试通过；Linux CI 运行包含 MySQL/Redis
   Testcontainers 的完整套件。
-- AI：Python 3.12 测试阶段 `21` tests passed；`11/11` 评测通过；`4/4`
+- AI：`22` 项 Python 测试通过；`11/11` 评测通过；`4/4`
   不安全请求被拦截。离线评测覆盖意图、参数与拦截。 [题集](apps/ai-service/eval/cases.json) · [报告](apps/ai-service/eval/report.json)
+- 模型出站：24 个合成场景全部通过，捕获到敏感标记的场景从 **9/24 降至 0/24**。其中 12 项捕获到模型请求且保留预期聚合数据，其余 12 项未调用模型。 [出站实验与记录](docs/verification/outbound-privacy.md)
 - Compose：MySQL、Redis、RabbitMQ、Java、FastAPI、Web、Prometheus、Grafana 全部 healthy。
 - Chromium：在系统深色偏好下仍为浅色页面，主页可进入查询页，Dashboard 保留查询链接。
 - Gitleaks：扫描源码和构建上下文，`no leaks found`。

@@ -50,3 +50,5 @@ not resolve the JRE and Nginx image metadata. The latest API source still passed
 a clean compile and 45 tests; its generated JAR was exercised in the previously
 verified non-root production runtime image. GitHub Actions performs the standard
 multi-stage Dockerfile build on a Linux runner.
+
+后续模型出站验证在相同的 24 个合成场景中测得敏感标记外发 **9/24 → 0/24**。其中 12 个允许场景捕获到模型请求且保留预期聚合数据。 [出站验证报告](outbound-privacy.md)
