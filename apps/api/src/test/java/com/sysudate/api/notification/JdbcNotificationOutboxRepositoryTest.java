@@ -116,7 +116,7 @@ class JdbcNotificationOutboxRepositoryTest extends MySqlContainerTest {
     }
 
     @Test
-    void returnsOldestAvailableEventsUpToBatchSize() throws Exception {
+    void returnsOldestAvailableEventsUpToBatchSize() {
         NotificationEvent first = NotificationEvent.emailVerification(
             "first@sysu.edu.cn",
             "111111",
@@ -126,8 +126,20 @@ class JdbcNotificationOutboxRepositoryTest extends MySqlContainerTest {
             "222222",
             "request-second");
         repository.enqueue(first);
-        Thread.sleep(5);
         repository.enqueue(second);
+        jdbc.update(
+            """
+                UPDATE notification_outbox
+                SET available_at = TIMESTAMPADD(SECOND, -1, CURRENT_TIMESTAMP(3)),
+                    created_at = TIMESTAMPADD(
+                        SECOND,
+                        CASE WHEN id = ? THEN -2 ELSE -1 END,
+                        CURRENT_TIMESTAMP(3))
+                WHERE id IN (?, ?)
+                """,
+            first.id(),
+            first.id(),
+            second.id());
 
         assertThat(repository.lockPending(1))
             .extracting(NotificationEvent::id)
