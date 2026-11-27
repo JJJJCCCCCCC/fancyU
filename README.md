@@ -1,164 +1,155 @@
-# FancyU（中意你）
+# FancyU · 中意你
 
-![API 包版本 1.0.0](https://img.shields.io/badge/API-1.0.0-blue) ![Node.js](https://img.shields.io/badge/Node.js-22%2B-339933?logo=nodedotjs) ![许可证未声明](https://img.shields.io/badge/License-未声明-lightgrey)
+**面向高校学生的校园交友与恋爱匹配平台。**
 
-FancyU 是一个面向高校学生的校园交友与恋爱匹配平台。学生通过校园邮箱注册，填写交友或恋爱问卷，查看匹配记录，并在双方同意后交换联系方式。
+![Node.js 22+](https://img.shields.io/badge/Node.js-22%2B-367554?logo=nodedotjs&logoColor=white) ![Express 4](https://img.shields.io/badge/Express-4-253B32?logo=express&logoColor=white) ![MySQL 8](https://img.shields.io/badge/MySQL-8-42759C?logo=mysql&logoColor=white)
 
-本仓库面向希望学习或复现校园匹配应用的开发者。项目曾部署在阿里云函数计算、RDS MySQL 和 OSS，现作为源码和历史运行材料保留。
+[产品流程](#product) · [公开版架构](#architecture) · [运行记录](#operations) · [工程化重构](#modernization) · [本地运行](#quickstart)
 
-![FancyU 移动端首页](docs/screenshots/product-home-detail.jpg)
+![FancyU 产品展示。左侧为校园匹配流程简介，右侧为历史版本的移动端首页与登录页。](docs/screenshots/fancyu-product.png)
 
-## 目录
+FancyU 将校园邮箱身份、恋爱与交友两条问卷流程、匹配记录和联系方式授权串成一套校园匹配应用。学生可独立选择参与哪类匹配，并在双方同意后查看联系方式。后台支持用户检索、投诉处理及运营统计。
 
-- [功能与技术栈](#features)
-- [快速开始](#quickstart)
-- [配置和 API](#usage)
-- [项目结构](#structure)
-- [开发与测试](#development)
-- [贡献方式](#contributing)
-- [许可证](#license)
-- [致谢](#acknowledgements)
+本仓库的 `main` 保存曾部署在阿里云的 **Node.js 版本**。项目后来完成了一轮 Java 和 Python 工程化重构，其设计与验证结果见下文。
 
-<a id="features"></a>
+<a id="product"></a>
 
-## 功能与技术栈
+## 产品流程
 
-| 功能 | 实现 |
+| 阶段 | 主要能力 | 对应页面与接口 |
+| --- | --- | --- |
+| 校园身份验证 | 校园邮箱验证码注册、账号登录和密码重置，支持绑定旧版问卷序列号 | [注册](frontend/register.html) · [登录](frontend/login.html) · [绑定序列号](frontend/bind.html) |
+| 问卷与参与 | 恋爱和交友问卷分别采集资料，用户可独立调整两类匹配参与状态 | [恋爱问卷](frontend/survey.html) · [交友问卷](frontend/friend_survey.html) · [个人中心](frontend/profile.html) |
+| 匹配与授权 | 读取当前账号的匹配记录，对指定记录提交同意，双方同意后开放联系方式 | [用户中心](frontend/dashboard.html) · `GET /account/matches` · `POST /account/exchange-contact` |
+| 后台运营 | 账号与问卷检索、投诉流转、统计查询，可配置 LLM 辅助管理查询 | [管理后台](frontend/admin.html) · `GET /admin/stats` · `POST /llm/chat` |
+
+<a id="architecture"></a>
+
+## 公开版架构
+
+历史线上部署采用 **OSS 静态前端、阿里云函数计算运行 Express API、RDS MySQL 持久化**。前端通过 HTTP 与 API 交互。Express 在同一进程内处理账号认证、问卷写入、匹配记录、投诉和管理查询，并通过 SMTP 发送验证码与问卷确认邮件。
+
+```mermaid
+flowchart LR
+    U["学生与管理员"] --> W["OSS · 静态页面"]
+    W -->|"HTTPS / JSON"| A["函数计算 · Node.js / Express"]
+    A -->|"账号 / 问卷 / 匹配 / 投诉"| D[("RDS MySQL")]
+    A -->|"验证码 / 问卷确认"| M["SMTP 邮件服务"]
+    A -.->|"可配置的管理查询辅助"| L["LLM 接口"]
+```
+
+### 业务与数据边界
+
+- **账号与旧数据兼容**。账号接口与根路径的历史问卷 `action` 接口并存。序列号可绑定到账号，也服务于旧流程的问卷查询和修改。
+- **匹配授权**。服务端使用账号 JWT 读取归属当前账号的匹配记录。界面根据本人同意、对方同意与联系方式交换状态展示结果。
+- **问卷持久化**。恋爱与交友问卷分流，提交时生成或沿用序列号。MySQL 迁移覆盖旧问卷结构、账号关联和后续字段调整。
+- **管理入口**。独立管理员登录保护用户检索、投诉及运营统计接口。可选 LLM 查询从同一后台进入。
+
+```mermaid
+sequenceDiagram
+    participant U as 当前用户
+    participant API as Express API
+    participant DB as MySQL
+    U->>API: GET /account/matches
+    API->>DB: 按当前账号读取匹配记录
+    API-->>U: 返回匹配与授权状态
+    U->>API: POST /account/exchange-contact
+    API->>DB: 校验记录归属并更新本人同意状态
+    alt 双方均同意
+        API-->>U: 标记联系方式可见
+        U->>API: 刷新匹配记录
+        API-->>U: 返回联系方式
+    else 等待对方同意
+        API-->>U: 返回等待确认状态
+    end
+```
+
+### 公开源码规模
+
+以下数字来自 [公开源码快照 `47660d0`](https://github.com/JJJJCCCCCCC/fancyU/tree/47660d07fa9f940ce60ff9e5f221e6216933fd95)。
+
+| 指标 | 数值 | 统计口径 |
+| --- | ---: | --- |
+| 静态页面 | **14** | [`frontend/`](frontend/) 下的 HTML 页面，覆盖用户端和管理端。 |
+| Express 方法与路径声明 | **34** | [`fc-code/index.js`](fc-code/index.js) 中显式注册的路由，根路径的 `action` 子操作未重复计算。 |
+| MySQL 迁移脚本 | **4** | [`fc-code/`](fc-code/) 下的版本化 SQL 文件。 |
+| 应用与迁移源码 | **17,202 行** | HTML（含内联样式和脚本）14,419 行，API 2,535 行，SQL 248 行。按物理行统计，含注释和空行。 |
+
+<a id="operations"></a>
+
+## 历史运行记录
+
+据项目留存的历史注册汇总，平台曾累计注册 **1,500+ 账号**。下图摘自阿里云函数计算监控，展示 **2026 年 5 月 11 日至 6 月 30 日** 的函数调用和 HTTP 状态，采样粒度为一小时。
+
+![FancyU 历史云端运行记录。左图为函数调用次数，右图为按 HTTP 状态码分组的请求次数。](docs/screenshots/fancyu-fc-monitoring.png)
+
+移动端截图和监控图均取自历史留存材料。更多部署与运行资料见 [证据索引](docs/EVIDENCE.md)。
+
+<a id="modernization"></a>
+
+## 后续工程化重构
+
+以下为独立维护的本地重构版本，聚焦旧数据兼容、事务一致性、异步通知与可复现交付。`main` 的运行命令仍适用于本仓库的 Node.js 版本。
+
+| 工程问题 | 重构实现 |
 | --- | --- |
-| 账号与资料 | 校园邮箱验证码注册、登录、密码重置、资料管理和旧序列号绑定 |
-| 问卷与匹配 | 恋爱和交友问卷、参与开关、匹配记录、双方同意后交换联系方式 |
-| 投诉与管理 | 投诉举报、管理员处理、用户检索与运营统计 |
-| 管理查询 | 管理员可通过配置的 LLM 接口辅助查询 |
+| 旧库迁移与重复提交 | Java 21 / Spring Boot 模块化单体；Flyway 兼容旧库升级与空库初始化；问卷、序列号和通知事件在同一事务内持久化，并用 `Idempotency-Key` 约束重复提交。 |
+| 身份、隐私与通信 | Spring Security、JWT 和 BCrypt 管理身份；Redis 保存 HMAC 后的验证码并原子消费；公开资料按授权字段返回；Transactional Outbox 将确认邮件交给 RabbitMQ，消费者按事件 ID 去重。 |
+| 受限的管理查询 | FastAPI 将自然语言转为类型化意图，使用短时服务令牌调用 Java 白名单查询；数据访问与字段限制留在 Java 侧。 |
+| 交付与观测 | Docker Compose 编排应用和基础设施；Prometheus / Grafana 配置随项目交付；本地工程配置了 Java、Python、前端检查与容器烟雾测试的 CI 工作流。 |
 
-前端以 HTML、CSS 和原生 JavaScript 实现。后端使用 Node.js、Express、MySQL 和 mysql2，通过 JWT 管理登录态、用 bcryptjs 哈希密码，并通过 Nodemailer 连接 SMTP。历史部署由 OSS 提供静态页面、函数计算运行 API、RDS 提供 MySQL。
+本地重构源码包含 **54 个 Java 主源码文件和 10 个 FastAPI 应用 Python 文件**。本次重新运行本地离线 AI 评测，**11/11 用例通过**，其中 **4/4 不安全请求被拦截**，评测记录中的敏感字段泄漏数为 **0**。
 
 <a id="quickstart"></a>
 
-## 快速开始
+## 本地运行公开版
 
-下面的命令用 Node.js 22 或较新的版本执行，并依赖 npm 和 Git。API 包版本取自 [`fc-code/package.json`](fc-code/package.json)。项目当前未配置自动构建工作流，因此只展示包版本徽章。
-
-1. 在仓库页面通过 **Code** 获取克隆地址，在本地克隆后进入根目录。
-2. 复制变量模板。如果根目录已经有 `.env`，保留该文件并按下一节检查配置。
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   PowerShell 使用 `Copy-Item .env.example .env`。
-
-3. 填好 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD` 和 `JWT_SECRET`，然后启动 API。仅检查服务是否启动时，可以保留模板的本地 MySQL 地址并使用测试库配置。健康检查只验证进程，业务接口访问数据库时才创建连接池。
-
-   ```bash
-   cd fc-code
-   npm ci
-   node --env-file=../.env index.js
-   ```
-
-4. 在另一个终端检查服务。
-
-   ```bash
-   curl -fsS http://127.0.0.1:9000/health
-   ```
-
-   PowerShell 可用 `Invoke-RestMethod http://127.0.0.1:9000/health`。返回 JSON 中的 `status` 为 `ok` 时，说明 API 进程已启动。数据库和邮件需通过对应业务流程另行验证。
-
-<a id="usage"></a>
-
-## 配置和 API
-
-### 环境变量
-
-配置模板位于 [`.env.example`](.env.example)。以上启动命令通过 Node.js 的 `--env-file` 加载根目录下的 `.env`。
-
-| 配置项 | 用途 |
-| --- | --- |
-| `MYSQL_HOST`、`MYSQL_PORT`、`MYSQL_USER`、`MYSQL_PASSWORD`、`MYSQL_DATABASE` | MySQL 连接参数。模板使用本地地址、`3306` 和测试库 `sysudate_test`。 |
-| `JWT_SECRET` | 签发账号和管理员令牌的密钥。启动时必填，使用为当前环境生成的随机值。 |
-| `ACCOUNT_NAME`、`FROM_ALIAS`、`SMTP_HOST`、`SMTP_PORT`、`SMTP_PASSWORD` | 邮件发送配置。注册验证码和密码重置需要可用的 SMTP。 |
-| `ADMIN_USERNAME`、`ADMIN_PASSWORD` | 管理员登录配置。只在需要验证后台功能时使用测试账号。 |
-| `LLM_API_URL` | 管理员 LLM 辅助查询地址。联调该功能时填写自己的测试服务地址。 |
-
-### 数据库与前端联调
-
-业务联调需要 MySQL 8.0 测试库。仓库内的 SQL 面向已有旧版结构，基础迁移会修改预先存在的 `users` 表。它们无法单独从空数据库初始化整套应用。准备与旧版兼容的测试结构后，按 `migration.sql`、`migration_v3.sql`、`migration_v3_fix.sql`、`migration_v4.sql` 的顺序**审阅并应用当前数据库仍缺少的迁移**。保留历史字段与结构要求，用合成数据验证功能。
-
-前端页面为静态 HTML。联调前，将要访问的页面里的 API 地址改为 `http://127.0.0.1:9000`，然后从仓库根目录启动静态服务。以下示例需要 Python 3。
+需要 Git、Node.js 22+ 和 npm。以下命令使用 Bash。
 
 ```bash
-python -m http.server 8080 --bind 127.0.0.1 --directory frontend
+git clone https://github.com/JJJJCCCCCCC/fancyU.git
+cd fancyU
+cp -n .env.example .env
 ```
 
-打开 [本地首页](http://127.0.0.1:8080/)，用测试数据走一遍登录、问卷、匹配记录和联系方式同意流程。验证邮箱时使用测试邮箱服务和系统允许的邮箱域。
-
-### API 示例
-
-| 接口 | 用途 | 授权 |
-| --- | --- | --- |
-| `GET /health` | 读取进程状态、时间戳和运行时长 | 无 |
-| `POST /account/register` | 使用邮箱验证码注册 | 无 |
-| `POST /account/login` | 通过邮箱或用户名登录 | 无 |
-| `GET /account/me` | 获取当前账号资料 | 账号 JWT |
-| `POST /?action=submitSurvey` | 提交恋爱问卷 | 支持已登录账号及旧版序列号流程 |
-| `GET /account/matches` | 查询当前账号的匹配记录 | 账号 JWT |
-| `POST /account/exchange-contact` | 对指定匹配提交交换联系方式的同意 | 账号 JWT |
-| `GET /admin/stats` | 读取后台运营统计 | 管理员 JWT |
-
-数据库和测试账号准备好后，可从终端登录并查询资料。示例使用 Bash 和 curl。
-
-```bash
-curl -sS http://127.0.0.1:9000/account/login \
-  -H 'Content-Type: application/json' \
-  -d '{"login":"your-test-username","password":"your-test-password"}'
-
-TOKEN='替换为登录响应顶层 token 字段的值'
-curl -sS http://127.0.0.1:9000/account/me \
-  -H "Authorization: Bearer ${TOKEN}"
-```
-
-调用业务接口时同时检查 HTTP 状态和 JSON 中的 `code`。部分业务错误通过响应体返回。
-
-<a id="structure"></a>
-
-## 项目结构
-
-| 路径 | 职责 |
-| --- | --- |
-| [frontend/](frontend/) | 首页、注册登录、问卷、匹配结果、个人资料和管理页面 |
-| [fc-code/index.js](fc-code/index.js) | Express 路由、登录态、问卷和匹配逻辑、邮件与管理接口 |
-| [fc-code/](fc-code/) | 依赖清单、MySQL 迁移和阿里云函数计算启动脚本 |
-| [docs/EVIDENCE.md](docs/EVIDENCE.md) | 产品页面、部署和运行截图的索引 |
-| [upload_frontend.sh](upload_frontend.sh) | 历史 OSS 上传脚本，默认指向原部署存储桶 |
-| [.env.example](.env.example) | 本地配置模板 |
-
-<a id="development"></a>
-
-## 开发与测试
-
-前端使用静态文件，无需打包。后端在 `fc-code/` 目录安装锁定依赖，通过 Node.js 直接运行。当前包没有定义 `npm run build` 或自动测试脚本。修改后可先检查语法，再执行上面的接口和浏览器联调。
+在 [`.env.example`](.env.example) 对应配置中，为本地环境填写 `MYSQL_HOST`、`MYSQL_USER`、`MYSQL_PASSWORD`、`JWT_SECRET` 和 `ADMIN_PASSWORD`。验证邮件或 LLM 功能时，再配置测试 SMTP 或 `LLM_API_URL`。PowerShell 可使用 `Copy-Item .env.example .env` 复制模板。
 
 ```bash
 cd fc-code
 npm ci
 node --check index.js
+node --env-file=../.env index.js
 ```
 
-手动验证时，至少检查健康接口、测试账号登录、问卷提交和已登录用户可访问的匹配记录。修改匹配或联系方式逻辑时，分别检查单方和双方同意的状态。修改管理接口时，用测试管理员验证权限边界。历史截图和说明见 [展示证据索引](docs/EVIDENCE.md)。
+在另一个终端运行 `curl -fsS http://127.0.0.1:9000/health`。返回 `status: ok` 代表应用进程在线。业务接口联调需要可连接的 MySQL 8.0 测试库。
 
-<a id="contributing"></a>
+<details>
+<summary>MySQL 迁移与前端联调</summary>
 
-## 贡献方式（Contributing）
+1. 准备与旧版兼容的测试库和合成数据。公开版迁移依赖已有 `users` 等旧表。按 [基础迁移](fc-code/migration.sql)、[v3](fc-code/migration_v3.sql)、[v3 修正](fc-code/migration_v3_fix.sql)、[v4](fc-code/migration_v4.sql) 的顺序审阅并应用当前测试库缺少的迁移。
+2. 将要联调的前端页面的 API 地址指向 `http://127.0.0.1:9000`。回到仓库根目录，用 Python 3 启动静态服务。
 
-欢迎提交 Issue 或 Pull Request。请附上运行环境、复现步骤、预期结果和验证结果。涉及页面的改动可附脱敏截图，涉及数据库结构的改动请说明适用的旧版本和迁移顺序。提交前请移除真实测试账号、邮箱、凭据和数据库导出。
+   ```bash
+   python -m http.server 8080 --bind 127.0.0.1 --directory frontend
+   ```
 
-<a id="license"></a>
+3. 打开 [本地首页](http://127.0.0.1:8080/)，按注册或登录、问卷提交、匹配记录、同意交换的顺序验证。测试联系方式时覆盖单方同意和双方同意两种状态。
+4. 调用 API 时同时检查 HTTP 状态和 JSON 中的 `code`。部分业务错误通过响应体返回。
 
-## 许可证（License）
+</details>
 
-仓库当前未声明项目许可证，也未包含 `LICENSE` 文件。复制、修改或分发源码前，请向权利人确认授权。各第三方组件适用各自的许可证。
+## 仓库导览
 
-<a id="acknowledgements"></a>
+| 路径 | 内容 |
+| --- | --- |
+| [`frontend/`](frontend/) | 静态产品页面、问卷、用户中心与管理后台。 |
+| [`fc-code/index.js`](fc-code/index.js) | Express 路由、业务逻辑、数据库访问、邮件与管理查询。 |
+| [`fc-code/`](fc-code/) | 依赖锁定、MySQL 迁移与函数计算启动脚本。 |
+| [`docs/EVIDENCE.md`](docs/EVIDENCE.md) | 历史产品页面、部署与运行截图索引。 |
+| [`upload_frontend.sh`](upload_frontend.sh) | 历史 OSS 部署脚本。 |
 
-## 致谢（Acknowledgements）
+反馈问题时，可附操作系统、Node.js 版本、最小复现步骤和实际结果。涉及账号、问卷或匹配的示例请使用合成数据。
 
-感谢 Node.js、Express、mysql2、Nodemailer、bcryptjs 和 jsonwebtoken 为项目提供运行时、HTTP、数据库、邮件及认证能力。
+## 许可
+
+本仓库当前没有声明项目许可证。第三方依赖遵循各自的许可证。
